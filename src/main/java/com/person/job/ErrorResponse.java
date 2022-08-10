@@ -6,7 +6,6 @@ public class ErrorResponse {
 	private String message;
 	
 	public ErrorResponse(int statusode ,String message) {
-		
 		super();
 		this.statusode=statusode;
 		this.message=message;
