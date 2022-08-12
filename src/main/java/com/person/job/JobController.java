@@ -4,9 +4,11 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -19,17 +21,17 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.ModelAndView;
 
-@RestController
+@Controller
 public class JobController<personJob> {
 
 	@Autowired
 	private PersonRepository per;
 
-	@GetMapping("pjob")
-	public String getJob() {
-
-		return "create ajob for person";
-
+	@GetMapping("/")
+	public String Indexpage(Model model) {
+		model.addAttribute("command",new PersonPojo());
+		return "index";
+		
 	}
 
 	@GetMapping("plist")
@@ -83,19 +85,31 @@ public class JobController<personJob> {
 
 	// }
 	@PostMapping("save")
-	public void savePersonPojo(@RequestBody PersonPojo p) {
-
-		per.save(p);
+	public String savePersonPojo(PersonPojo person, Model model) {
+		per.save(person);
+		model.addAttribute("command",new PersonPojo());
+		return "index";
+		
 	}
 
-	@GetMapping("getDetails/{id}")
-	public PersonPojo getPersonDetails(@PathVariable Integer id) throws PersonDetailsNotFound {
+	@GetMapping("getpersonById/{id}")
+	public String getPersonDetails(@PathVariable Integer id,Model model) throws PersonDetailsNotFound {
 
 		try {
-			return per.findById(id).get();
+			PersonPojo p =per.findById(id).get();
+			model.addAttribute("p",p);
 		} catch (Exception e) {
 			throw new PersonDetailsNotFound("forthis id notAvilable.pls usebelow ids");
 		}
+		return "view";
+		
+	}
+	@GetMapping("getAllPersons")
+	public String getAllPersons(PersonPojo perons,Model model){
+		List<PersonPojo> list=per.findAll();
+		model.addAttribute("list",list);
+		
+		return "viewAllPersonDetails" ;
 		
 	}
 //
@@ -111,20 +125,21 @@ public class JobController<personJob> {
 //		per.deleteById(id);
 //
 //	}
-	@DeleteMapping("deleteby/{id}")
-	public PersonPojo deleteById(@PathVariable Integer id) throws DeletePersonDetailsNotFound {
+	@GetMapping("deleteperson/{id}")
+	public String deleteById(@PathVariable Integer id,PersonPojo p) throws DeletePersonDetailsNotFound {
 		try {
-			return per.findById(id).get();
+			 per.delete(p);
 		} catch (Exception e) {
 			throw new  DeletePersonDetailsNotFound("deletedperson notAvilable.pls usebelow ids");
 		}
+		return "delete";
 
 		//per.deleteById(id);
 
 	}
 	
-	@PutMapping("update")
-	public void update(@RequestBody PersonPojo p) {
+	@GetMapping("edit")
+	public void updateById(@RequestBody PersonPojo p) {
 		per.save(p);
 		
 	}

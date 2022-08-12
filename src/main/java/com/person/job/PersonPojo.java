@@ -16,6 +16,13 @@ public class PersonPojo implements Serializable  {
 	private static final long serialVersionUID=1L;
 	private Integer id;
 	private String name;
+	/*public PersonPojo(Integer id, String name, Integer age, String address) {
+		super();
+		this.id = id;
+		this.name = name;
+		this.age = age;
+		this.address = address;
+	}*/
 	private Integer age;
 	private String address;
 	
